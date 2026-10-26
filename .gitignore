@@ -35,4 +35,5 @@ build/
 ### Secrets ###
 .env
 .env.*
+!.env.example
 application-local.yml
