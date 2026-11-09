@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicLong;// biến tự tăng để lưu d�
 @RestController 
 //Khai báo controller trả về dữ liệu cho client
 @RequestMapping ("/api/users")
-public class UserControler {
+public class UserController {
     private final ConcurrentHashMap<Long, User> users = new ConcurrentHashMap<>();
     private  final AtomicLong nextID = new AtomicLong();
 
@@ -45,7 +45,7 @@ public class UserControler {
 
     //Post: Tạo người dùng mới
     @PostMapping 
-    public ResponseEntity<User> creaeteUser(
+    public ResponseEntity<User> createUser(
             @RequestBody UserRequest request){
         
         Long id = nextID.incrementAndGet();
@@ -64,9 +64,9 @@ public class UserControler {
             @PathVariable Long id,
             @RequestBody UserRequest request){
         
-        User existignUser = users.get(id);
+        User existingUser = users.get(id);
 
-        if (existignUser == null){
+        if (existingUser == null){
             return ResponseEntity.notFound().build();
         }
 
