@@ -5,9 +5,9 @@ import com.example.demo.entity.User;
 import com.example.demo.repository.UserRepository;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import com.example.demo.exception.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserService{
@@ -18,30 +18,38 @@ public class UserService{
     }
 
     public User create(UserRequest request){
+        if(userRepository.existsByEmail(request.email())){
+            throw new DuplicateEmailException(request.email());
+        }
         return userRepository.save(new User(request.name(),request.email()));
     }
 
-    public Optional<User> getById(long id){
-        return userRepository.findById(id);
+    public User getById(long id){
+        return userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy user id"));
     }
 
     public List<User> getAll(){
-        return userRepository.findAll(Sort.by("id"));
+        List<User> userList = userRepository.findAll(Sort.by("id"));
+        if(userList.isEmpty()){
+            throw new ResourceNotFoundException("Danh sách trống");
+        }
+        return userList;
     }
 
-    public Optional<User> update(Long id, UserRequest request){
-        return userRepository.findById(id).map(user -> {
-            user.setName(request.name());
-            user.setEmail(request.email());
-            return userRepository.save(user);
-        });
+    public User update(Long id, UserRequest request){
+        User user = getById(id);
+        if(userRepository.existsByEmail(request.email())){
+            throw new DuplicateEmailException(request.email());
+        }
+        user.setName(request.name());
+        user.setEmail(request.email());
+        return userRepository.save(user);
     }
 
-    public Boolean delete(Long id){
+    public void delete(Long id){
         if(!userRepository.existsById(id)){
-            return false;
+            throw new ResourceNotFoundException("Không tìm thấy user id = "+id);
         }
         userRepository.deleteById(id);
-        return true;
     }
 }

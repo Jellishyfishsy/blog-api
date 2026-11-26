@@ -4,6 +4,8 @@ import com.example.demo.entity.User;
 import com.example.demo.dto.*;
 import com.example.demo.service.UserService;
 
+import jakarta.validation.Valid;
+
 import org.springframework.http.HttpStatus;
 //enum chứa các status code của HTTP
 import org.springframework.http.ResponseEntity;
@@ -32,27 +34,28 @@ public class UserController {
 
     // GET: lấy user theo id, trả về 404 nếu không tồn tại
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) {
-        return userService.getById(id).map(UserResponse::from).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    public UserResponse getUserById(@PathVariable Long id) {
+        return UserResponse.from(userService.getById(id));
     }
 
     // POST: tạo người dùng mới, trả về 201
     @PostMapping
-    public ResponseEntity<UserResponse> createUser(@RequestBody UserRequest request) {
+    public ResponseEntity<UserResponse> createUser(@Valid @RequestBody UserRequest request) {
         User newUser = userService.create(request); 
         return ResponseEntity.status(HttpStatus.CREATED).body(UserResponse.from(newUser));
     }
 
     // PUT: cập nhật người dùng, trả về 404 nếu không tồn tại
     @PutMapping("/{id}")
-    public ResponseEntity<UserResponse> updateUser(@PathVariable Long id, @RequestBody UserRequest request) {
-        return userService.update(id, request).map(UserResponse::from).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    public UserResponse updateUser(@PathVariable Long id,@Valid @RequestBody UserRequest request) {
+        return UserResponse.from(userService.update(id, request));
     }
 
     // DELETE: xóa người dùng, trả về 204 nếu thành công, 404 nếu không tồn tại
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        return userService.delete(id)?ResponseEntity.noContent().build(): ResponseEntity.notFound().build();
+        userService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 
  }

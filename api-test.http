@@ -6,8 +6,8 @@ POST http://localhost:8080/api/users
 Content-Type: application/json
 
 {
-    "name": "Nguyen Van c",
-    "email": "nika@gmail.com"
+    "name": "Nguyen Van 6",
+    "email": "nila@gmail.com"
 }
 
 ### 3. Tạo người dùng thứ hai
@@ -20,7 +20,7 @@ Content-Type: application/json
 }
 
 ### 4. Lấy người dùng có ID 1
-GET http://localhost:8080/api/users/4
+GET http://localhost:8080/api/users/1
 
 ### 5. Cập nhật người dùng có ID 1
 PUT http://localhost:8080/api/users/4
